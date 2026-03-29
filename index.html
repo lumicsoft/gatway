@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Payment Test</title>
+    
+    <script src="https://lumicsoft.online/lumic-sdk.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #020617; color: white; }
+        .card { background: #0f172a; padding: 40px; border-radius: 20px; border: 1px solid rgba(234, 179, 8, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        h2 { color: #ca8a04; margin-bottom: 10px; }
+        p { color: #94a3b8; margin-bottom: 30px; }
+        button { background: #ca8a04; color: white; border: none; padding: 15px 35px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s; }
+        button:hover { background: #eab308; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(202, 138, 4, 0.4); }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Lumic Pay Test</h2>
+        <p>Click below to test 10 USDT Payment</p>
+        
+        <button onclick="payNow()">Add 10 USDT Fund</button>
+    </div>
+
+    <script>
+        function payNow() {
+            // Check if SDK is loaded
+            if (typeof LumicPay === 'undefined') {
+                alert("Error: Lumic SDK load nahi hui. Kripya internet check karein ya path sahi karein.");
+                return;
+            }
+
+            // SDK Call
+            LumicPay.open({
+                amount: "10.00",
+                orderId: "GG01_" + Math.floor(Math.random() * 1000),
+                // Merchant Proxy Address (Jo aapne image mein dikhaya tha)
+                merchantProxy: "0x1C5F9e1512FaB6591f670987CCE24cCe2D189264", 
+                onSuccess: function() {
+                    alert("SUCCESS: Payment received! Merchant site updating...");
+                    window.location.reload(); 
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
