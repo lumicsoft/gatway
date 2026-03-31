@@ -3,44 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merchant Payment Test</title>
+    <title>Lumic Gateway | Dynamic Deposit</title>
     
     <script src="https://lumicsoft.online/lumic-sdk.js"></script>
     
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #020617; color: white; }
-        .card { background: #0f172a; padding: 40px; border-radius: 20px; border: 1px solid rgba(234, 179, 8, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        h2 { color: #ca8a04; margin-bottom: 10px; }
-        p { color: #94a3b8; margin-bottom: 30px; }
-        button { background: #ca8a04; color: white; border: none; padding: 15px 35px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s; }
-        button:hover { background: #eab308; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(202, 138, 4, 0.4); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); 
+            color: white; 
+        }
+        .card { 
+            background: rgba(15, 23, 42, 0.8); 
+            padding: 40px; 
+            border-radius: 24px; 
+            border: 1px solid rgba(234, 179, 8, 0.3); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            text-align: center; 
+            width: 100%;
+            max-width: 350px;
+            backdrop-filter: blur(10px);
+        }
+        h2 { color: #eab308; margin-bottom: 5px; letter-spacing: 1px; }
+        p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #ca8a04;
+            font-weight: bold;
+            margin-bottom: 8px;
+            margin-left: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #eab308;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        input:focus {
+            border-color: #eab308;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.2);
+        }
+        
+        button { 
+            background: linear-gradient(to right, #ca8a04, #a16207); 
+            color: black; 
+            border: none; 
+            width: 100%;
+            padding: 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 900; 
+            text-transform: uppercase;
+            transition: all 0.4s; 
+        }
+        button:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(202, 138, 4, 0.4); 
+            filter: brightness(1.2);
+        }
+        button:active { transform: translateY(0); }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Lumic Pay Test</h2>
-        <p>Click below to test 10 USDT Payment</p>
+        <h2>Lumic Pay</h2>
+        <p>Enter amount to add funds (USDT)</p>
         
-        <button onclick="payNow()">Add 10 USDT Fund</button>
+        <div class="input-group">
+            <label>Amount (USDT)</label>
+            <input type="number" id="depositAmount" placeholder="0.00" min="1" step="0.1">
+        </div>
+        
+        <button onclick="payNow()">Proceed to Pay</button>
     </div>
 
     <script>
         function payNow() {
-            // Check if SDK is loaded
-            if (typeof LumicPay === 'undefined') {
-                alert("Error: Lumic SDK load nahi hui. Kripya internet check karein ya path sahi karein.");
+            // 1. Amount Fetch karein
+            const amountInput = document.getElementById('depositAmount').value;
+            
+            // 2. Validation
+            if (!amountInput || amountInput <= 0) {
+                alert("Kripya valid amount enter karein!");
                 return;
             }
 
-            // SDK Call
+            // 3. Check if SDK is loaded
+            if (typeof LumicPay === 'undefined') {
+                alert("Error: Lumic SDK load nahi hui. Path check karein.");
+                return;
+            }
+
+            // 4. SDK Call with Dynamic Amount
             LumicPay.open({
-                amount: "10.00",
-                orderId: "GG01_" + Math.floor(Math.random() * 1000),
-                // Merchant Proxy Address (Jo aapne image mein dikhaya tha)
+                amount: parseFloat(amountInput).toFixed(2), // 2 decimal tak fix
+                orderId: "LMC_" + Date.now(), // Unique Order ID time ke saath
                 merchantProxy: "0x1C5F9e1512FaB6591f670987CCE24cCe2D189264", 
                 onSuccess: function() {
-                    alert("SUCCESS: Payment received! Merchant site updating...");
+                    alert("SUCCESS: " + amountInput + " USDT Deposit Successful!");
                     window.location.reload(); 
                 }
             });
